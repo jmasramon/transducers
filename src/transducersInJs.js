@@ -160,4 +160,22 @@ console.log(transduce(squaresOfTheOddNumbersTransformer, sumOfReducer, 0, one2te
 // oparators (maps, filters) through the reducer function
 // and this allows to compose the transformation at value level
 // only traversing the foldable once.
+
+// Exercise: tracking user transitions
+const logContents = `1a2ddc2, 5f2b932
+                    f1a543f, 5890595
+                    3abe124, bd11537
+                    f1a543f, 5f2b932
+                    f1a543f, bd11537
+                    f1a543f, 5890595
+                    1a2ddc2, bd11537
+                    1a2ddc2, 5890595
+                    3abe124, 5f2b932
+                    f1a543f, 5f2b932
+                    f1a543f, bd11537
+                    f1a543f, 5890595
+                    1a2ddc2, 5f2b932
+                    1a2ddc2, bd11537
+                    1a2ddc2, 5890595`;
+
 console.log('**************************');
