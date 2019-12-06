@@ -1,7 +1,9 @@
 console.log(' -> Transducers project working');
 
-// REDUCER FUNCTION
-// We use reducing functions to describe "the essence of the transformation"
+// REDUCER FUNCTION: takes an accomulator
+// and a value and folds the value into the accomulator
+// We use reducing functions to describe "the essence
+//of the transformation"
 function sum(acc: number, item: number): number {
   return acc + item;
 }
