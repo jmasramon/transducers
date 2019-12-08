@@ -18,16 +18,6 @@ function multReducer(acc: number, item: number): number {
 const input = [2, 3, 4];
 console.log(`input to all reductions = ${input}`);
 
-// REDUCING
-console.log('Native reductions');
-
-const summed = input.reduce(sumReducer, 1);
-console.log(` summed = ${summed}`);
-
-// 24 (=1*2*3*4)
-const multiplied = input.reduce(multReducer, 1);
-console.log(` multiplied = ${multiplied}`);
-
 // TODO: not well defined interface -> compiler complains about specific accs of either type
 // so TS is getting on the way of a perfectly correct polymorphic js
 interface CatamorphicReducingFunction {
@@ -46,37 +36,28 @@ interface Transformer {
   result: (result: number | number[]) => number | number[];
 }
 
+// wraps reducing function into transformer object
 const wrap = function(reducingFunction: ReducingFunction): Transformer {
   return {
-    // 1. Start with an initial value
     init: function() {
       throw new Error('init not supported');
     },
 
-    // 2. Input one item at a time, passing
-    //    each result to next iteration
-    //    using reducing function
     step: reducingFunction,
 
-    // 3. Output last computed result
     result: function(result: number | number[]) {
       return result;
     },
   };
 };
 
+// functional reduce based on transformers instead of reducing functions
 function reduce(xf: Transformer | ReducingFunction, init: number | number[], input: number[]): number | number[] {
-  let acc = init;
   if (typeof xf === 'function') {
-    // make sure we have a transformer
     xf = wrap(xf);
   }
 
   const result = input.reduce(xf.step, init);
-  // to try to make the compiler stop complaining
-  // for (const value of input) {
-  //   acc = xf.step(acc, value);
-  // }
 
   return xf.result(result);
 }
@@ -86,9 +67,8 @@ console.log('Functional reductions');
 const output = reduce(sumReducer, 1, input);
 console.log(` reducing over sum and 1 = ${output}`);
 
-const xf = wrap(multReducer);
-const output2 = reduce(xf, 1, input);
-console.log(` reducing over mult and 1 = ${output2}`);
+const output2 = reduce(wrap(multReducer), 1, input);
+console.log(` reducing over mult (wrapped by transformer) and 1 = ${output2}`);
 
 const appendReducer: ReducingFunction = function(acc: number[], item: number): number[] {
   acc.push(item);
@@ -96,28 +76,28 @@ const appendReducer: ReducingFunction = function(acc: number[], item: number): n
 };
 
 const output3 = reduce(appendReducer, [], input);
-console.log(` reducing over append and []  = ${output3}`);
+console.log(` reducing with append and []  = ${output3}`);
 
 function plus1(item: number) {
   return item + 1;
 }
 
+// transformer that adds one to the values reduced over
 const xfplus1: Transformer = {
   init: function() {
     throw new Error('init not needed');
   },
   step: function(result: number[], item: number): number[] {
-    var plus1ed = plus1(item);
-    return appendReducer(result, plus1ed);
+    return appendReducer(result, plus1(item));
   },
   result: function(result) {
     return result;
   },
 };
 
-console.log('Using transformer');
+console.log('Using plus1 transformer and manually stepping through the reduction');
 
-let result = xfplus1.step([], 2);
+let result = xfplus1.step([], 2); // shouldn't be better to use init?
 console.log(` partial ${result}`);
 
 result = xfplus1.step(result, 3);
@@ -126,7 +106,7 @@ console.log(` partial ${result}`);
 result = xfplus1.step(result, 4);
 console.log(` partial ${result}`);
 
-console.log(` result with explicit reducing: ${reduce(xfplus1, [], input)}`);
+console.log(` result with "automatic" reducing: ${reduce(xfplus1, [], input)}`);
 console.log(` further folding with reduce and sumReducer: ${reduce(sumReducer, 0, reduce(xfplus1, [], input))}`);
 
 console.log('Generalizing transformer to transducer: a transformer decorator');
@@ -134,14 +114,14 @@ console.log('Generalizing transformer to transducer: a transformer decorator');
 const transducerPlus1 = function(xf: Transformer): Transformer {
   return {
     init: function() {
-      return xf.init();
+      return xf.init(); // delegates to the decorated transformer
     },
     step: function(result: number[], item: number) {
       const plus1ed = plus1(item);
-      return xf.step(result, plus1ed);
+      return xf.step(result, plus1ed); // delegates after decoration
     },
     result: function(result) {
-      return xf.result(result);
+      return xf.result(result); //same
     },
   };
 };
@@ -157,11 +137,10 @@ console.log(` partial ${result}`);
 result = xf2.step(result, 4);
 console.log(` partial ${result}`);
 
-console.log(` result with transducer step by step: ${xf.result(result)}`);
-// [3,4,5]
+console.log(` result with transducer step by step: ${xf2.result(result)}`);
 console.log(` result with transducer through reduce: ${reduce(xf2, [], input)}`);
 
-console.log(` now we can reuse it with different reducer: ${reduce(transducerPlus1(wrap(sumReducer)), 0, input)}`);
+console.log(` now we can reuse it with different reducer/stepper: ${reduce(transducerPlus1(wrap(sumReducer)), 0, input)}`);
 
 // Generalizing transducers to maps and filters
 interface MappingFunction {
@@ -179,8 +158,7 @@ var map = function(f: MappingFunction): Transducer {
         return xf.init();
       },
       step: function(result: number[], item: number) {
-        var mapped = f(item);
-        return xf.step(result, mapped);
+        return xf.step(result, f(item));
       },
       result: function(result: number[]) {
         return xf.result(result);
@@ -188,9 +166,9 @@ var map = function(f: MappingFunction): Transducer {
     };
   };
 };
-console.log(' now we can use map to make different isomorphism decorators');
+console.log(' now we can use map to make different isomorphic decorators');
 console.log(`  ${reduce(map(x => x + 5)(wrap(appendReducer)), [], input)}`);
-console.log(`  ${reduce(map(x => x + 5)(wrap(sumReducer)), 0, input)}`);
+console.log(`  ${reduce(map(x => x + 3)(wrap(sumReducer)), 0, input)}`);
 
 // making a more standard runner
 function transduce(transducer: Transducer, stepper: ReducingFunction, init: number | number[], input: number[]) {
@@ -202,7 +180,7 @@ function transduce(transducer: Transducer, stepper: ReducingFunction, init: numb
     xf = stepper;
   }
 
-  var xf: Transformer = transducer(xf);
+  var xf: Transformer = transducer(xf); // decorate the reducer with the transformer
 
   return reduce(xf, init, input);
 }

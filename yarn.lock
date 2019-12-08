@@ -1581,6 +1581,11 @@ ignore@^5.0.0, ignore@^5.1.1:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.1.4.tgz#84b7b3dbe64552b6ef0eca99f6743dbec6d97adf"
   integrity sha512-MzbUSahkTW1u7JpKKjY7LCARd1fU5W2rLdxlM4kdkayuCwZImjkpluF9CM1aLewYJguPDqewLam18Y6AU69A8A==
 
+immutable-js@^0.3.1-6:
+  version "0.3.1-6"
+  resolved "https://registry.yarnpkg.com/immutable-js/-/immutable-js-0.3.1-6.tgz#42ac4805899a9afea86bd3cfdfe2478aec24d100"
+  integrity sha1-QqxIBYmamv6oa9PP3+JHiuwk0QA=
+
 import-fresh@^3.0.0:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-3.2.1.tgz#633ff618506e793af5ac91bf48b72677e15cbe66"
@@ -2758,6 +2763,11 @@ punycode@^2.1.0:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
+ramda@^0.26.1:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.1.tgz#8d41351eb8111c55353617fc3bbffad8e4d35d06"
+  integrity sha512-hLWjpy7EnsDBb0p+Z3B7rPi3GDeRG5ZtiI33kJhTt+ORCd38AbAIjB/9zRIUoeTbE/AVX5ZkU7m6bznsvrf8eQ==
+
 rc@^1.0.1, rc@^1.1.6, rc@^1.2.7:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
@@ -3428,6 +3438,16 @@ touch@^3.1.0:
   integrity sha512-WBx8Uy5TLtOSRtIq+M03/sKDrXCLHxwDcquSP2c43Le03/9serjQBIztjRz6FkJez9D/hleyAXTBGLwwZUw9lA==
   dependencies:
     nopt "~1.0.10"
+
+transduce-stream@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/transduce-stream/-/transduce-stream-0.5.0.tgz#7008b3bc639a7c06879354f09d80fb8a4c584490"
+  integrity sha1-cAizvGOafAaHk1TwnYD7ikxYRJA=
+
+transducers-js@^0.4.174:
+  version "0.4.174"
+  resolved "https://registry.yarnpkg.com/transducers-js/-/transducers-js-0.4.174.tgz#d5862c10eff4be3d3322abf6bb742e30f1bb6fc4"
+  integrity sha1-1YYsEO/0vj0zIqv2u3QuMPG7b8Q=
 
 tree-kill@^1.2.1:
   version "1.2.1"

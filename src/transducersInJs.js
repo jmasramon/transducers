@@ -1,10 +1,12 @@
+/* jshint esversion: 6 */
+
 console.log('**************************');
 
 let acc = [1, 2, 3];
 const val = 4;
 
 // Reducer functions: binary fuctions (accomulator, new_value)
-let concatReducer = (acc, val) => acc.concat([val]);
+const concatReducer = (acc, val) => acc.concat([val]);
 
 console.log(concatReducer(acc, val));
 
@@ -16,32 +18,32 @@ console.log(setAddReducer(acc, val));
 
 // Reduce on top of reducer functions
 const reduce = (iterable, reducer, seed) => {
-  let accumulation = seed;
+    let accumulation = seed;
 
-  for (value of iterable) {
-    accumulation = reducer(accumulation, value);
-  }
+    for (value of iterable) {
+        accumulation = reducer(accumulation, value);
+    }
 
-  return accumulation;
+    return accumulation;
 };
 console.log(reduce([1, 2, 3], concatReducer, []));
 
 // Ramda style
 const reduceWith = (reducer, seed, iterable) => {
-  let accumulation = seed;
+    let accumulation = seed;
 
-  for (const value of iterable) {
-    accumulation = reducer(accumulation, value);
-  }
+    for (const value of iterable) {
+        accumulation = reducer(accumulation, value);
+    }
 
-  return accumulation;
+    return accumulation;
 };
 console.log(reduceWith(concatReducer, [], [1, 2, 3]));
 
 // better concatenator
 const arrayOfReducer = (acc, val) => {
-  acc.push(val);
-  return acc;
+    acc.push(val);
+    return acc;
 };
 console.log(reduceWith(arrayOfReducer, [], [1, 2, 3]));
 
@@ -84,10 +86,10 @@ const one2tenIterable = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 console.log(reduceWith(squaresDecorator(sumOfReducer), 0, one2tenIterable));
 
 const bigUnsReducer = (acc, val) => {
-  if (val > 5) {
-    acc.push(val);
-  }
-  return acc;
+    if (val > 5) {
+        acc.push(val);
+    }
+    return acc;
 };
 
 console.log(reduceWith(map(x => power(x, 2))(bigUnsReducer), [], one2tenIterable));
@@ -107,47 +109,45 @@ console.log(reduceWith(filter(x => x > 5)(map(x => power(x, 2))(arrayOfReducer))
 // (binary) composition reducer function
 const compositionOf = (acc, val) => (...args) => val(acc(...args));
 console.log(
-  reduceWith(
-    compositionOf(
-      filter(x => x > 5),
-      map(x => power(x, 2)),
-    )(arrayOfReducer),
-    [],
-    one2tenIterable,
-  ),
+    reduceWith(
+        compositionOf(
+            filter(x => x > 5),
+            map(x => power(x, 2)),
+        )(arrayOfReducer), [],
+        one2tenIterable,
+    ),
 );
 
 // composition as reduction with composition reducer function
 const funcId = x => x;
 const compose = (...fns) => reduceWith(compositionOf, funcId, fns);
 console.log(
-  reduceWith(
-    compose(
-      filter(x => x > 5),
-      map(x => power(x, 2)),
-    )(arrayOfReducer),
-    [],
-    one2tenIterable,
-  ),
+    reduceWith(
+        compose(
+            filter(x => x > 5),
+            map(x => power(x, 2)),
+        )(arrayOfReducer), [],
+        one2tenIterable,
+    ),
 );
 
 // reduceWith components: tranformer (for the reducer),
 // reducer, seed, iterable
 // Transducers make this explícit
 const transduce = (transformer, reducer, seed, iterable) => {
-  const transformedReducer = transformer(reducer);
-  let accumulation = seed;
+    const transformedReducer = transformer(reducer);
+    let accumulation = seed;
 
-  for (const value of iterable) {
-    accumulation = transformedReducer(accumulation, value);
-  }
+    for (const value of iterable) {
+        accumulation = transformedReducer(accumulation, value);
+    }
 
-  return accumulation;
+    return accumulation;
 };
 
 const squaresOfTheOddNumbersTransformer = compose(
-  filter(x => x % 2 === 1),
-  squaresDecorator,
+    filter(x => x % 2 === 1),
+    squaresDecorator,
 );
 console.log(transduce(squaresOfTheOddNumbersTransformer, sumOfReducer, 0, one2tenIterable));
 
