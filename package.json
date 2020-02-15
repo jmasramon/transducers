@@ -33,6 +33,6 @@
         "transduce-stream": "^0.5.0",
         "transducers-js": "^0.4.174",
         "tslint": "^5.20.1",
-        "yarn": "^1.21.0"
+        "yarn": "^1.22.0"
     }
 }
